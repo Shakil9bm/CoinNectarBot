@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MoneyTag MiniApp — Watch & Earn</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>MoneyTag — Watch & Earn</h1>
+      <p class="sub">1 Ad = <strong>1,000 BTTC</strong> · Daily limit: <strong>30</strong> · Minimum Withdraw: <strong>100,000 BTTC</strong></p>
+    </header>
+
+    <section class="status">
+      <div>
+        <div class="label">Your Balance</div>
+        <div id="balance" class="big">0 BTTC</div>
+      </div>
+      <div>
+        <div class="label">Today's Ads Watched</div>
+        <div id="dailyCount" class="big">0 / 30</div>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="watchAdBtn" class="primary">🎥 Watch Ad & Earn 1,000 BTTC</button>
+      <div class="note">You can watch up to <strong>30</strong> ads per day</div>
+    </section>
+
+    <section class="withdraw">
+      <h2>Withdraw</h2>
+      <div class="form-row">
+        <label>Binance ID / Wallet:</label>
+        <input id="binanceId" placeholder="Enter your Binance ID (e.g. abc123...)" />
+      </div>
+      <div class="form-row">
+        <label>Withdraw Amount (BTTC):</label>
+        <input id="withdrawAmount" type="number" min="0" placeholder="100000 or more" />
+      </div>
+      <button id="withdrawBtn" class="secondary">Withdraw</button>
+      <div id="withdrawMsg" class="msg"></div>
+    </section>
+
+    <section class="history">
+      <h2>Withdraw History</h2>
+      <ul id="historyList"></ul>
+    </section>
+
+    <div id="adModal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Ad is playing...</h3>
+        <p>Watch till the end to earn <strong>1,000 BTTC</strong></p>
+        <div id="adTimer" class="timer">5</div>
+        <button id="closeAd" class="ghost hidden">Close</button>
+      </div>
+    </div>
+
+    <footer>
+      <small>Demo app — data is stored locally. To enable real ads, integrate Monetag SDK and backend.</small>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
