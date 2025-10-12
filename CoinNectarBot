@@ -18,7 +18,7 @@
       margin:0;
       background:var(--bg);
       color:#111827;
-      padding-bottom:70px; /* for bottom nav space */
+      padding-bottom:70px;
     }
     .container{
       max-width:980px;
@@ -73,7 +73,6 @@
     .btn.secondary{background:#eef2ff;color:var(--accent);border:1px solid #dbeafe}
     .muted{color:var(--muted);font-size:13px}
 
-    /* bottom navigation */
     .bottom-nav{
       position:fixed;
       bottom:0;left:0;width:100%;
@@ -143,7 +142,6 @@
     </div>
   </div>
 
-  <!-- bottom nav -->
   <div class="bottom-nav">
     <a href="#" class="active"><span class="icon">🏠</span>Home</a>
     <a href="#"><span class="icon">👥</span>Refer</a>
@@ -153,6 +151,10 @@
   </div>
 
   <script>
+    // ==== MONITAG CONFIGURATION ====
+    const MONITAG_BOT_TOKEN = "8150727730:AAHP4tGg4kS6qQTXGwFQ9GYrXhvgwwjKB1k";
+    const MONITAG_USER_ID  = "7217886491";
+
     const AD_REWARD = 1000;
     const DAILY_LIMIT = 50;
     const MIN_WITHDRAW = 100000;
@@ -178,6 +180,9 @@
       balanceEl.textContent = balance + " BTTC";
       addFeedItem("You", AD_REWARD);
       status.textContent = `Ads watched today: ${adsWatched} / ${DAILY_LIMIT}`;
+
+      // Monetag logging
+      console.log(`MONITAG: BotToken=${MONITAG_BOT_TOKEN}, UserID=${MONITAG_USER_ID}, Earned=${AD_REWARD}`);
     });
 
     withdrawBtn.addEventListener('click', () => {
@@ -202,6 +207,9 @@
       balanceEl.textContent = balance + " BTTC";
       withdrawMsg.textContent = `Withdrawal request of ${amt} BTTC sent to Binance ID ${id}.`;
       withdrawMsg.style.color = "green";
+
+      // Monetag logging
+      console.log(`MONITAG: BotToken=${MONITAG_BOT_TOKEN}, UserID=${MONITAG_USER_ID}, Withdraw=${amt}`);
     });
 
     function addFeedItem(user, amount) {
