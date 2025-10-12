@@ -1,89 +1,216 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZALES EARN LTD</title>
-<style>
-  body { font-family: 'Poppins', sans-serif; margin:0; background:#f5f6fa; color:#111; }
-  header { text-align:center; padding:20px 10px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.05); }
-  h1 { margin:0; font-size:22px; color:#222; }
-  .container { padding:20px; max-width:900px; margin:auto; }
-  .card { background:#fff; border-radius:12px; padding:18px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:18px; }
-  .section-title { font-size:18px; font-weight:600; margin-bottom:10px; color:#222; }
-  p { line-height:1.6; color:#333; margin:6px 0; }
-  a { color:#2c7be5; text-decoration:none; }
-  table { width:100%; border-collapse:collapse; margin-top:10px; }
-  table, th, td { border:1px solid #ddd; }
-  th, td { padding:10px; text-align:center; font-size:14px; }
-  th { background:#f3f4f6; }
-  footer { text-align:center; padding:14px; font-size:13px; color:#666; background:#fff; }
-  /* Bottom nav bar */
-  .navbar { position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; padding:10px 0; box-shadow:0 -2px 6px rgba(0,0,0,0.05); }
-  .nav-item { text-align:center; font-size:13px; color:#555; }
-  .nav-item.active { color:#000; font-weight:600; }
-  .nav-item i { display:block; font-size:20px; margin-bottom:4px; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CoinNectar · BTTC Faucet</title>
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --muted:#8b8f94;
+      --accent:#2b6cb0;
+      --success:#16a34a;
+      --danger:#e11d48;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:#111827;
+      padding-bottom:70px; /* for bottom nav space */
+    }
+    .container{
+      max-width:980px;
+      margin:28px auto;
+      padding:18px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .logo{
+      width:48px;height:48px;border-radius:10px;
+      background:linear-gradient(135deg,#4f46e5,#06b6d4);
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
+      box-shadow:0 6px 18px rgba(15,23,42,0.08);
+    }
+    .title h1{margin:0;font-size:18px}
+    .title p{margin:0;color:var(--muted);font-size:13px}
+    .balance-card{
+      background:var(--card);
+      padding:12px 18px;
+      border-radius:12px;
+      box-shadow:0 6px 20px rgba(15,23,42,0.04);
+      text-align:right;
+    }
+    .balance-card .label{font-size:12px;color:var(--muted)}
+    .balance-card .amount{font-size:20px;font-weight:700}
+
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 4px 10px rgba(15,23,42,0.05);
+      margin-bottom:16px;
+    }
+
+    .live-feed{max-height:250px;overflow:auto;padding-right:6px}
+    .feed-item{display:flex;justify-content:space-between;padding:10px;border-radius:8px;margin-bottom:8px;background:#fbfdff;border:1px solid #eef6ff}
+    .feed-item small{color:var(--muted)}
+
+    .btn{
+      border:0;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer;
+      background:var(--accent);color:white;
+    }
+    .btn.secondary{background:#eef2ff;color:var(--accent);border:1px solid #dbeafe}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* bottom navigation */
+    .bottom-nav{
+      position:fixed;
+      bottom:0;left:0;width:100%;
+      background:#fff;
+      border-top:1px solid #e5e7eb;
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+      height:60px;
+      box-shadow:0 -2px 6px rgba(0,0,0,0.05);
+      z-index:100;
+    }
+    .bottom-nav a{
+      flex:1;
+      text-align:center;
+      text-decoration:none;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .bottom-nav a.active{color:var(--accent);font-weight:600}
+    .bottom-nav .icon{display:block;font-size:20px;margin-bottom:2px}
+  </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">CN</div>
+        <div class="title">
+          <h1>CoinNectarBot</h1>
+          <p>BTTC Balance System</p>
+        </div>
+      </div>
+      <div class="balance-card">
+        <div class="label">BTTC Balance</div>
+        <div class="amount" id="balance">0 BTTC</div>
+      </div>
+    </header>
 
-<header>
-  <h1>💰 ZALES EARN LTD</h1>
-  <p>Your earning platform powered by <a href="https://t.me/CoinNectarBot" target="_blank">@CoinNectarBot</a></p>
-</header>
+    <div class="card">
+      <h3 style="margin-top:0">Live Claim Updates</h3>
+      <p class="muted">New joiners and recent earnings</p>
+      <div id="liveFeed" class="live-feed"></div>
+    </div>
 
-<div class="container">
+    <div class="card">
+      <h3>Watch Ads & Earn</h3>
+      <p class="muted">Earn 1,000 BTTC per ad • 50 ads daily limit</p>
+      <button class="btn" id="watchAdBtn">Watch Ad (Earn 1,000 BTTC)</button>
+      <p id="status" class="muted" style="margin-top:8px">Ads watched today: <span id="adsWatched">0</span> / 50</p>
+    </div>
 
-  <div class="card">
-    <div class="section-title">🏠 Home</div>
-    <p><strong>Welcome to ZALES EARN LTD</strong> — the most trusted ad-viewing and earning platform powered by <strong>CoinNectarBot</strong>.</p>
-    <ul style="margin-left:20px;">
-      <li>📺 <strong>Watch Ads:</strong> Earn <strong>+700 BTTC</strong> for each ad you view.</li>
-      <li>🎯 <strong>Daily Limit:</strong> You can watch up to <strong>50 ads per day</strong>.</li>
-      <li>👥 <strong>Referral Bonus:</strong> Invite friends and earn <strong>+1000 BTTC</strong> for each successful referral.</li>
-      <li>💸 <strong>Withdraw:</strong> Minimum <strong>100 000 BTTC</strong> via <strong>Binance ID</strong> — fast and secure through <a href="https://t.me/CoinNectarBot" target="_blank">@CoinNectarBot</a>.</li>
-    </ul>
+    <div class="card">
+      <h3>Referral Bonus</h3>
+      <p>Invite your friends and earn <strong>1,500 BTTC</strong> per referral.</p>
+      <input value="REF-CN-12345" readonly style="width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;">
+      <p class="muted" style="margin-top:6px">Share this referral code with others.</p>
+    </div>
+
+    <div class="card">
+      <h3>Withdrawal</h3>
+      <p class="muted">Minimum withdrawal: <strong>100,000 BTTC</strong> (Binance ID required)</p>
+      <input id="binanceId" placeholder="Enter Binance ID" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;">
+      <input id="withdrawAmount" type="number" placeholder="Amount (BTTC)" style="width:100%;padding:8px;margin-top:8px;border:1px solid #ddd;border-radius:8px;">
+      <button class="btn" id="withdrawBtn" style="margin-top:8px;width:100%;">Withdraw</button>
+      <p id="withdrawMsg" class="muted" style="margin-top:8px"></p>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="section-title">🔥 Live Claim Updates</div>
-    <p>See real-time claim activities from users worldwide. New rewards are claimed every few seconds from ads and referrals!</p>
+  <!-- bottom nav -->
+  <div class="bottom-nav">
+    <a href="#" class="active"><span class="icon">🏠</span>Home</a>
+    <a href="#"><span class="icon">👥</span>Refer</a>
+    <a href="#"><span class="icon">📺</span>Ads</a>
+    <a href="#"><span class="icon">💰</span>Earn</a>
+    <a href="#"><span class="icon">👛</span>Withdraw</a>
   </div>
 
-  <div class="card">
-    <div class="section-title">🤝 Refer & Earn</div>
-    <p>Invite your friends using your personal referral link. For every friend who joins using your link, you instantly receive <strong>+1000 BTTC</strong> as a referral bonus.</p>
-  </div>
+  <script>
+    const AD_REWARD = 1000;
+    const DAILY_LIMIT = 50;
+    const MIN_WITHDRAW = 100000;
 
-  <div class="card">
-    <div class="section-title">💼 Withdraw</div>
-    <p>When your balance reaches <strong>100 000 BTTC</strong>, request a withdrawal directly to your <strong>Binance ID</strong>.</p>
-    <p>All payments are processed automatically and securely via our Telegram bot: <a href="https://t.me/CoinNectarBot" target="_blank">@CoinNectarBot</a>.</p>
-  </div>
+    let balance = 0;
+    let adsWatched = 0;
 
-  <div class="card">
-    <div class="section-title">⚡ Summary</div>
-    <table>
-      <tr><th>Feature</th><th>Reward</th><th>Limit</th></tr>
-      <tr><td>Watch Ads</td><td>+700 BTTC</td><td>50 ads / day</td></tr>
-      <tr><td>Referral Bonus</td><td>+1000 BTTC</td><td>Unlimited</td></tr>
-      <tr><td>Withdraw</td><td>Min. 100 000 BTTC</td><td>Binance ID</td></tr>
-    </table>
-  </div>
+    const balanceEl = document.getElementById('balance');
+    const adsWatchedEl = document.getElementById('adsWatched');
+    const liveFeed = document.getElementById('liveFeed');
+    const status = document.getElementById('status');
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const withdrawMsg = document.getElementById('withdrawMsg');
 
-</div>
+    document.getElementById('watchAdBtn').addEventListener('click', () => {
+      if (adsWatched >= DAILY_LIMIT) {
+        alert("Daily ad limit (50) reached.");
+        return;
+      }
+      adsWatched++;
+      balance += AD_REWARD;
+      adsWatchedEl.textContent = adsWatched;
+      balanceEl.textContent = balance + " BTTC";
+      addFeedItem("You", AD_REWARD);
+      status.textContent = `Ads watched today: ${adsWatched} / ${DAILY_LIMIT}`;
+    });
 
-<div class="navbar">
-  <div class="nav-item active"><i>🏠</i>Home</div>
-  <div class="nav-item"><i>👥</i>Refer</div>
-  <div class="nav-item"><i>📺</i>Ads</div>
-  <div class="nav-item"><i>💰</i>Earn</div>
-  <div class="nav-item"><i>💼</i>Withdrawal</div>
-</div>
+    withdrawBtn.addEventListener('click', () => {
+      const id = document.getElementById('binanceId').value.trim();
+      const amt = Number(document.getElementById('withdrawAmount').value);
+      if (!id) {
+        withdrawMsg.textContent = "Please enter your Binance ID.";
+        withdrawMsg.style.color = "red";
+        return;
+      }
+      if (amt < MIN_WITHDRAW) {
+        withdrawMsg.textContent = "Minimum withdrawal is 100,000 BTTC.";
+        withdrawMsg.style.color = "red";
+        return;
+      }
+      if (amt > balance) {
+        withdrawMsg.textContent = "Insufficient balance.";
+        withdrawMsg.style.color = "red";
+        return;
+      }
+      balance -= amt;
+      balanceEl.textContent = balance + " BTTC";
+      withdrawMsg.textContent = `Withdrawal request of ${amt} BTTC sent to Binance ID ${id}.`;
+      withdrawMsg.style.color = "green";
+    });
 
-<footer>
-  © 2025 ZALES EARN LTD | Powered by <a href="https://t.me/CoinNectarBot" target="_blank">@CoinNectarBot</a>
-</footer>
-
+    function addFeedItem(user, amount) {
+      const div = document.createElement('div');
+      div.className = 'feed-item';
+      div.innerHTML = `<div><strong>${user}</strong><br><small>${new Date().toLocaleTimeString()}</small></div>
+                       <div><strong>+${amount} BTTC</strong></div>`;
+      liveFeed.prepend(div);
+    }
+  </script>
 </body>
 </html>
