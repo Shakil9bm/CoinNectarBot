@@ -1,1 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinNectarBot — Ad Reward System</title>
+<style>
+body{
+    margin:0; padding:0;
+    background:#061021; color:#e9fbf2;
+    font-family:Arial,sans-serif; display:flex; justify-content:center; align-items:center; height:100vh;
+}
+.container{
+    background:rgba(255,255,255,0.02); padding:20px; border-radius:16px;
+    width:320px; box-shadow:0 12px 40px rgba(0,0,0,0.6);
+}
+h1{color:#00d48f; text-align:center;}
+.stats{margin:10px 0;}
+.stats p{margin:5px 0; font-size:14px;}
+.progress-circle{width:80px; height:80px; border:4px solid #00d48f; border-radius:50%; display:flex; justify-content:center; align-items:center; margin:10px auto;}
+.progress-circle span{font-size:18px; font-weight:bold;}
+.buttons button{
+    width:90%; margin:5px 0; padding:10px;
+    font-size:14px; border:none; border-radius:5px; cursor:pointer;
+}
+.btn-primary{background:#00d48f; color:#022;}
+.btn-primary:hover{background:#006400;}
+.withdraw-section{display:none; margin-top:15px; background:rgba(255,255,255,0.03); padding:12px; border-radius:10px;}
+.withdraw-section input, .withdraw-section select{width:100%; padding:10px; margin:6px 0; border-radius:5px; background:#333; color:#fff; border:1px solid #555;}
+.withdraw-section button{background:#00d48f; width:100%; padding:12px; font-size:16px; border-radius:5px; cursor:pointer; margin-top:10px;}
+.withdraw-section button:hover{background:#006400;}
+#withdraw-status{color:red; font-size:14px; margin-top:8px;}
+</style>
 
+<!-- Moneytag Mini App SDK -->
+<script src='//libtl.com/sdk.js' data-zone='10030164' data-sdk='show_10030164'></script>
+
+</head>
+<body>
+<div class="container">
+<h1>CoinNectarBot</h1>
+
+<div class="stats">
+<p>Watched Ads: <span id="watched-ads">0</span></p>
+<p>Earned Points: <span id="earned-points">0.00</span></p>
+</div>
+
+<div class="progress-circle">
+<span id="ads-progress">0%</span>
+</div>
+
+<div class="buttons">
+<button class="btn-primary" id="watch-ad-btn" onclick="watchAd()">Watch Ad</button>
+<button class="btn-primary" id="auto-ad-btn" onclick="startAutoAds()">Auto Show Ads</button>
+<button class="btn-primary" id="stop-auto-btn" onclick="stopAutoAds()">Stop Auto Ads</button>
+<button class="btn-primary" onclick="showWithdrawForm()">Withdraw</button>
+</div>
+
+<div class="withdraw-section" id="withdraw-section">
+<h3>Withdrawal Request</h3>
+<input type="number" id="withdraw-amount" placeholder="Enter Points to Withdraw" />
+<select id="payment-method">
+<option value="bkash">Bkash</option>
+<option value="nagad">Nagad</option>
+<option value="manual">Manual</option>
+</select>
+<input type="text" id="withdraw-phone" placeholder="Enter Phone Number" />
+<button onclick="withdrawPoints()">Withdraw</button>
+<p id="withdraw-status"></p>
+</div>
+</div>
+
+<script>
+const BOT_TOKEN = "8150727730:AAHP4tGg4kS6qQTXGwFQ9GYrXhvgwwjKB1k";
+const ADMIN_USER_ID = 7694112804;
+
+// Load saved data from localStorage
+let watchedAdsCount = parseInt(localStorage.getItem('watchedAdsCount')) || 0;
+let earnedPoints = parseFloat(localStorage.getItem('earnedPoints')) || 0.00;
+let autoAdInterval = null;
+
+function updateUI(){
+    document.getElementById('watched-ads').textContent = watchedAdsCount;
+    document.getElementById('earned-points').textContent = earnedPoints.toFixed(2);
+    const pct = Math.min(100, watchedAdsCount);
+    document.getElementById('ads-progress').textContent = pct + '%';
+}
+
+// Save to localStorage
+function saveData(){
+    localStorage.setItem('watchedAdsCount', watchedAdsCount);
+    localStorage.setItem('earnedPoints', earnedPoints.toFixed(2));
+}
+
+function watchAd(){
+    if(typeof show_10030164 === 'function'){
+        show_10030164().then(()=>{
+            watchedAdsCount++;
+            earnedPoints += 1; // 1 coin per ad
+            updateUI();
+            saveData();
+        }).catch(err=>console.log(err));
+    }
+}
+
+function startAutoAds(){
+    if(autoAdInterval) return;
+    autoAdInterval = setInterval(watchAd, 5000);
+    document.getElementById('auto-ad-btn').disabled = true;
+    document.getElementById('stop-auto-btn').disabled = false;
+}
+
+function stopAutoAds(){
+    clearInterval(autoAdInterval);
+    autoAdInterval = null;
+    document.getElementById('auto-ad-btn').disabled = false;
+    document.getElementById('stop-auto-btn').disabled = true;
+}
+
+function showWithdrawForm(){
+    document.getElementById('withdraw-section').style.display='block';
+}
+
+function withdrawPoints(){
+    const amount = parseFloat(document.getElementById('withdraw-amount').value);
+    const method = document.getElementById('payment-method').value;
+    const phone = document.getElementById('withdraw-phone').value;
+
+    if(amount > earnedPoints){
+        document.getElementById('withdraw-status').textContent = 'Insufficient balance!';
+        return;
+    }
+
+    earnedPoints -= amount;
+    updateUI();
+    saveData();
+
+    const message = `Withdrawal Request from User:\nAmount: ${amount}\nMethod: ${method}\nPhone: ${phone}`;
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_USER_ID}&text=${encodeURIComponent(message)}`)
+    .then(res=>res.json())
+    .then(data=>console.log(data));
+
+    document.getElementById('withdraw-status').textContent = 'Request sent!';
+    document.getElementById('withdraw-amount').value='';
+    document.getElementById('withdraw-phone').value='';
+}
+
+updateUI();
+</script>
+</body>
+</html>
