@@ -31,31 +31,22 @@ h1{color:#00d48f; text-align:center;}
 .withdraw-section button:hover{background:#006400;}
 #withdraw-status{color:red; font-size:14px; margin-top:8px;}
 </style>
-
-<!-- Moneytag Mini App SDK -->
 <script src='//libtl.com/sdk.js' data-zone='10030164' data-sdk='show_10030164'></script>
-
 </head>
 <body>
 <div class="container">
 <h1>CoinNectarBot</h1>
-
 <div class="stats">
-<p>Watched Ads: <span id="watched-ads">0</span></p>
-<p>Earned Points: <span id="earned-points">0.00</span></p>
+<p>Watched Ads Today: <span id="watched-ads">0</span>/20</p>
+<p>Earned BTTC: <span id="earned-points">0</span></p>
 </div>
-
 <div class="progress-circle">
 <span id="ads-progress">0%</span>
 </div>
-
 <div class="buttons">
-<button class="btn-primary" id="watch-ad-btn" onclick="watchAd()">Watch Ad</button>
-<button class="btn-primary" id="auto-ad-btn" onclick="startAutoAds()">Auto Show Ads</button>
-<button class="btn-primary" id="stop-auto-btn" onclick="stopAutoAds()">Stop Auto Ads</button>
+<button class="btn-primary" id="watch-ad-btn">Watch Ad</button>
 <button class="btn-primary" onclick="showWithdrawForm()">Withdraw</button>
 </div>
-
 <div class="withdraw-section" id="withdraw-section">
 <h3>Withdrawal Request</h3>
 <input type="number" id="withdraw-amount" placeholder="Enter Points to Withdraw" />
@@ -74,48 +65,111 @@ h1{color:#00d48f; text-align:center;}
 const BOT_TOKEN = "8150727730:AAHP4tGg4kS6qQTXGwFQ9GYrXhvgwwjKB1k";
 const ADMIN_USER_ID = 7694112804;
 
-// Load saved data from localStorage
+const DAILY_ADS_LIMIT = 20;
+const BTTC_PER_AD = 100;
+const WAIT_BEFORE_AD = 3; // 3 seconds before ad starts
+const AD_DURATION = 15; // 15 seconds full ad
+
 let watchedAdsCount = parseInt(localStorage.getItem('watchedAdsCount')) || 0;
-let earnedPoints = parseFloat(localStorage.getItem('earnedPoints')) || 0.00;
-let autoAdInterval = null;
+let earnedPoints = parseInt(localStorage.getItem('earnedPoints')) || 0;
+
+let adInProgress = false;
+let remainingAdTime = 0;
+let adTimer = null;
+let adFullyWatched = false;
+
+const watchBtn = document.getElementById('watch-ad-btn');
+const adsSpan = document.getElementById('watched-ads');
+const pointsSpan = document.getElementById('earned-points');
+const progressSpan = document.getElementById('ads-progress');
 
 function updateUI(){
-    document.getElementById('watched-ads').textContent = watchedAdsCount;
-    document.getElementById('earned-points').textContent = earnedPoints.toFixed(2);
-    const pct = Math.min(100, watchedAdsCount);
-    document.getElementById('ads-progress').textContent = pct + '%';
-}
-
-// Save to localStorage
-function saveData(){
-    localStorage.setItem('watchedAdsCount', watchedAdsCount);
-    localStorage.setItem('earnedPoints', earnedPoints.toFixed(2));
-}
-
-function watchAd(){
-    if(typeof show_10030164 === 'function'){
-        show_10030164().then(()=>{
-            watchedAdsCount++;
-            earnedPoints += 1; // 1 coin per ad
-            updateUI();
-            saveData();
-        }).catch(err=>console.log(err));
+    adsSpan.textContent = watchedAdsCount;
+    pointsSpan.textContent = earnedPoints;
+    const pct = Math.min(100, (watchedAdsCount/DAILY_ADS_LIMIT)*100);
+    progressSpan.textContent = pct.toFixed(0)+'%';
+    if(watchedAdsCount >= DAILY_ADS_LIMIT){
+        watchBtn.disabled = true;
+        watchBtn.textContent = "Daily Limit Reached";
     }
 }
 
-function startAutoAds(){
-    if(autoAdInterval) return;
-    autoAdInterval = setInterval(watchAd, 5000);
-    document.getElementById('auto-ad-btn').disabled = true;
-    document.getElementById('stop-auto-btn').disabled = false;
+function saveData(){
+    localStorage.setItem('watchedAdsCount', watchedAdsCount);
+    localStorage.setItem('earnedPoints', earnedPoints);
 }
 
-function stopAutoAds(){
-    clearInterval(autoAdInterval);
-    autoAdInterval = null;
-    document.getElementById('auto-ad-btn').disabled = false;
-    document.getElementById('stop-auto-btn').disabled = true;
+function startWaitCountdown(){
+    watchBtn.disabled = true;
+    let waitTime = WAIT_BEFORE_AD;
+    watchBtn.textContent = `Starting Ad in ${waitTime}s`;
+
+    const waitInterval = setInterval(()=>{
+        waitTime--;
+        watchBtn.textContent = `Starting Ad in ${waitTime}s`;
+        if(waitTime <= 0){
+            clearInterval(waitInterval);
+            startAd();
+        }
+    },1000);
 }
+
+function startAd(){
+    remainingAdTime = AD_DURATION;
+    adInProgress = true;
+    adFullyWatched = false;
+    watchBtn.textContent = `Watching Ad... ${remainingAdTime}s`;
+
+    adTimer = setInterval(()=>{
+        remainingAdTime--;
+        watchBtn.textContent = `Watching Ad... ${remainingAdTime}s`;
+
+        if(remainingAdTime <= 0){
+            clearInterval(adTimer);
+            adInProgress = false;
+            adFullyWatched = true;
+
+            // Add BTTC and increment watched count only if fully watched
+            if(adFullyWatched){
+                watchedAdsCount++;
+                earnedPoints += BTTC_PER_AD;
+                updateUI();
+                saveData();
+            }
+
+            if(watchedAdsCount < DAILY_ADS_LIMIT){
+                watchBtn.disabled = false;
+                watchBtn.textContent = "Watch Ad";
+            }
+        }
+    },1000);
+
+    // Show Moneytag ad
+    if(typeof show_10030164 === 'function'){
+        show_10030164().catch(err=>console.log(err));
+    }
+}
+
+// Pause/resume on page visibility
+document.addEventListener("visibilitychange", () => {
+    if(adInProgress){
+        if(document.visibilityState === "hidden" && adTimer){
+            clearInterval(adTimer);
+            adTimer = null;
+            adFullyWatched = false; // If user leaves, ad is not fully watched
+        } else if(document.visibilityState === "visible" && !adTimer){
+            // Resume timer
+            startAd();
+        }
+    }
+});
+
+watchBtn.addEventListener('click', ()=>{
+    if(watchedAdsCount >= DAILY_ADS_LIMIT) return;
+    if(!adInProgress){
+        startWaitCountdown();
+    }
+});
 
 function showWithdrawForm(){
     document.getElementById('withdraw-section').style.display='block';
@@ -148,4 +202,4 @@ function withdrawPoints(){
 updateUI();
 </script>
 </body>
-</html>
+    </html>
