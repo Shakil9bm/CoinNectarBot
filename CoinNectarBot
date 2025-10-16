@@ -1,224 +1,151 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CoinNectar · BTTC Faucet</title>
-  <style>
-    :root{
-      --bg:#f6f7f9;
-      --card:#ffffff;
-      --muted:#8b8f94;
-      --accent:#2b6cb0;
-      --success:#16a34a;
-      --danger:#e11d48;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    body{
-      margin:0;
-      background:var(--bg);
-      color:#111827;
-      padding-bottom:70px;
-    }
-    .container{
-      max-width:980px;
-      margin:28px auto;
-      padding:18px;
-    }
-    header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:16px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    .logo{
-      width:48px;height:48px;border-radius:10px;
-      background:linear-gradient(135deg,#4f46e5,#06b6d4);
-      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
-      box-shadow:0 6px 18px rgba(15,23,42,0.08);
-    }
-    .title h1{margin:0;font-size:18px}
-    .title p{margin:0;color:var(--muted);font-size:13px}
-    .balance-card{
-      background:var(--card);
-      padding:12px 18px;
-      border-radius:12px;
-      box-shadow:0 6px 20px rgba(15,23,42,0.04);
-      text-align:right;
-    }
-    .balance-card .label{font-size:12px;color:var(--muted)}
-    .balance-card .amount{font-size:20px;font-weight:700}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinNectarBot — Ad Reward System</title>
+<style>
+body{
+    margin:0; padding:0;
+    background:#061021; color:#e9fbf2;
+    font-family:Arial,sans-serif; display:flex; justify-content:center; align-items:center; height:100vh;
+}
+.container{
+    background:rgba(255,255,255,0.02); padding:20px; border-radius:16px;
+    width:320px; box-shadow:0 12px 40px rgba(0,0,0,0.6);
+}
+h1{color:#00d48f; text-align:center;}
+.stats{margin:10px 0;}
+.stats p{margin:5px 0; font-size:14px;}
+.progress-circle{width:80px; height:80px; border:4px solid #00d48f; border-radius:50%; display:flex; justify-content:center; align-items:center; margin:10px auto;}
+.progress-circle span{font-size:18px; font-weight:bold;}
+.buttons button{
+    width:90%; margin:5px 0; padding:10px;
+    font-size:14px; border:none; border-radius:5px; cursor:pointer;
+}
+.btn-primary{background:#00d48f; color:#022;}
+.btn-primary:hover{background:#006400;}
+.withdraw-section{display:none; margin-top:15px; background:rgba(255,255,255,0.03); padding:12px; border-radius:10px;}
+.withdraw-section input, .withdraw-section select{width:100%; padding:10px; margin:6px 0; border-radius:5px; background:#333; color:#fff; border:1px solid #555;}
+.withdraw-section button{background:#00d48f; width:100%; padding:12px; font-size:16px; border-radius:5px; cursor:pointer; margin-top:10px;}
+.withdraw-section button:hover{background:#006400;}
+#withdraw-status{color:red; font-size:14px; margin-top:8px;}
+</style>
 
-    .card{
-      background:var(--card);
-      border-radius:12px;
-      padding:16px;
-      box-shadow:0 4px 10px rgba(15,23,42,0.05);
-      margin-bottom:16px;
-    }
+<!-- Moneytag Mini App SDK -->
+<script src='//libtl.com/sdk.js' data-zone='10030164' data-sdk='show_10030164'></script>
 
-    .live-feed{max-height:250px;overflow:auto;padding-right:6px}
-    .feed-item{display:flex;justify-content:space-between;padding:10px;border-radius:8px;margin-bottom:8px;background:#fbfdff;border:1px solid #eef6ff}
-    .feed-item small{color:var(--muted)}
-
-    .btn{
-      border:0;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer;
-      background:var(--accent);color:white;
-    }
-    .btn.secondary{background:#eef2ff;color:var(--accent);border:1px solid #dbeafe}
-    .muted{color:var(--muted);font-size:13px}
-
-    .bottom-nav{
-      position:fixed;
-      bottom:0;left:0;width:100%;
-      background:#fff;
-      border-top:1px solid #e5e7eb;
-      display:flex;
-      justify-content:space-around;
-      align-items:center;
-      height:60px;
-      box-shadow:0 -2px 6px rgba(0,0,0,0.05);
-      z-index:100;
-    }
-    .bottom-nav a{
-      flex:1;
-      text-align:center;
-      text-decoration:none;
-      color:var(--muted);
-      font-size:13px;
-    }
-    .bottom-nav a.active{color:var(--accent);font-weight:600}
-    .bottom-nav .icon{display:block;font-size:20px;margin-bottom:2px}
-  </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo">CN</div>
-        <div class="title">
-          <h1>CoinNectarBot</h1>
-          <p>BTTC Balance System</p>
-        </div>
-      </div>
-      <div class="balance-card">
-        <div class="label">BTTC Balance</div>
-        <div class="amount" id="balance">0 BTTC</div>
-      </div>
-    </header>
+<div class="container">
+<h1>CoinNectarBot</h1>
 
-    <div class="card">
-      <h3 style="margin-top:0">Live Claim Updates</h3>
-      <p class="muted">New joiners and recent earnings</p>
-      <div id="liveFeed" class="live-feed"></div>
-    </div>
+<div class="stats">
+<p>Watched Ads: <span id="watched-ads">0</span></p>
+<p>Earned Points: <span id="earned-points">0.00</span></p>
+</div>
 
-    <div class="card">
-      <h3>Watch Ads & Earn</h3>
-      <p class="muted">Earn 1,000 BTTC per ad • 50 ads daily limit</p>
-      <button class="btn" id="watchAdBtn">Watch Ad (Earn 1,000 BTTC)</button>
-      <p id="status" class="muted" style="margin-top:8px">Ads watched today: <span id="adsWatched">0</span> / 50</p>
-    </div>
+<div class="progress-circle">
+<span id="ads-progress">0%</span>
+</div>
 
-    <div class="card">
-      <h3>Referral Bonus</h3>
-      <p>Invite your friends and earn <strong>1,500 BTTC</strong> per referral.</p>
-      <input value="REF-CN-12345" readonly style="width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;">
-      <p class="muted" style="margin-top:6px">Share this referral code with others.</p>
-    </div>
+<div class="buttons">
+<button class="btn-primary" id="watch-ad-btn" onclick="watchAd()">Watch Ad</button>
+<button class="btn-primary" id="auto-ad-btn" onclick="startAutoAds()">Auto Show Ads</button>
+<button class="btn-primary" id="stop-auto-btn" onclick="stopAutoAds()">Stop Auto Ads</button>
+<button class="btn-primary" onclick="showWithdrawForm()">Withdraw</button>
+</div>
 
-    <div class="card">
-      <h3>Withdrawal</h3>
-      <p class="muted">Minimum withdrawal: <strong>100,000 BTTC</strong> (Binance ID required)</p>
-      <input id="binanceId" placeholder="Enter Binance ID" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;">
-      <input id="withdrawAmount" type="number" placeholder="Amount (BTTC)" style="width:100%;padding:8px;margin-top:8px;border:1px solid #ddd;border-radius:8px;">
-      <button class="btn" id="withdrawBtn" style="margin-top:8px;width:100%;">Withdraw</button>
-      <p id="withdrawMsg" class="muted" style="margin-top:8px"></p>
-    </div>
-  </div>
+<div class="withdraw-section" id="withdraw-section">
+<h3>Withdrawal Request</h3>
+<input type="number" id="withdraw-amount" placeholder="Enter Points to Withdraw" />
+<select id="payment-method">
+<option value="bkash">Bkash</option>
+<option value="nagad">Nagad</option>
+<option value="manual">Manual</option>
+</select>
+<input type="text" id="withdraw-phone" placeholder="Enter Phone Number" />
+<button onclick="withdrawPoints()">Withdraw</button>
+<p id="withdraw-status"></p>
+</div>
+</div>
 
-  <div class="bottom-nav">
-    <a href="#" class="active"><span class="icon">🏠</span>Home</a>
-    <a href="#"><span class="icon">👥</span>Refer</a>
-    <a href="#"><span class="icon">📺</span>Ads</a>
-    <a href="#"><span class="icon">💰</span>Earn</a>
-    <a href="#"><span class="icon">👛</span>Withdraw</a>
-  </div>
+<script>
+const BOT_TOKEN = "8150727730:AAHP4tGg4kS6qQTXGwFQ9GYrXhvgwwjKB1k";
+const ADMIN_USER_ID = 7694112804;
 
-  <script>
-    // ==== MONITAG CONFIGURATION ====
-    const MONITAG_BOT_TOKEN = "8150727730:AAHP4tGg4kS6qQTXGwFQ9GYrXhvgwwjKB1k";
-    const MONITAG_USER_ID  = "7217886491";
+// Load saved data from localStorage
+let watchedAdsCount = parseInt(localStorage.getItem('watchedAdsCount')) || 0;
+let earnedPoints = parseFloat(localStorage.getItem('earnedPoints')) || 0.00;
+let autoAdInterval = null;
 
-    const AD_REWARD = 1000;
-    const DAILY_LIMIT = 50;
-    const MIN_WITHDRAW = 100000;
+function updateUI(){
+    document.getElementById('watched-ads').textContent = watchedAdsCount;
+    document.getElementById('earned-points').textContent = earnedPoints.toFixed(2);
+    const pct = Math.min(100, watchedAdsCount);
+    document.getElementById('ads-progress').textContent = pct + '%';
+}
 
-    let balance = 0;
-    let adsWatched = 0;
+// Save to localStorage
+function saveData(){
+    localStorage.setItem('watchedAdsCount', watchedAdsCount);
+    localStorage.setItem('earnedPoints', earnedPoints.toFixed(2));
+}
 
-    const balanceEl = document.getElementById('balance');
-    const adsWatchedEl = document.getElementById('adsWatched');
-    const liveFeed = document.getElementById('liveFeed');
-    const status = document.getElementById('status');
-    const withdrawBtn = document.getElementById('withdrawBtn');
-    const withdrawMsg = document.getElementById('withdrawMsg');
-
-    document.getElementById('watchAdBtn').addEventListener('click', () => {
-      if (adsWatched >= DAILY_LIMIT) {
-        alert("Daily ad limit (50) reached.");
-        return;
-      }
-      adsWatched++;
-      balance += AD_REWARD;
-      adsWatchedEl.textContent = adsWatched;
-      balanceEl.textContent = balance + " BTTC";
-      addFeedItem("You", AD_REWARD);
-      status.textContent = `Ads watched today: ${adsWatched} / ${DAILY_LIMIT}`;
-
-      // Monetag logging
-      console.log(`MONITAG: BotToken=${MONITAG_BOT_TOKEN}, UserID=${MONITAG_USER_ID}, Earned=${AD_REWARD}`);
-    });
-
-    withdrawBtn.addEventListener('click', () => {
-      const id = document.getElementById('binanceId').value.trim();
-      const amt = Number(document.getElementById('withdrawAmount').value);
-      if (!id) {
-        withdrawMsg.textContent = "Please enter your Binance ID.";
-        withdrawMsg.style.color = "red";
-        return;
-      }
-      if (amt < MIN_WITHDRAW) {
-        withdrawMsg.textContent = "Minimum withdrawal is 100,000 BTTC.";
-        withdrawMsg.style.color = "red";
-        return;
-      }
-      if (amt > balance) {
-        withdrawMsg.textContent = "Insufficient balance.";
-        withdrawMsg.style.color = "red";
-        return;
-      }
-      balance -= amt;
-      balanceEl.textContent = balance + " BTTC";
-      withdrawMsg.textContent = `Withdrawal request of ${amt} BTTC sent to Binance ID ${id}.`;
-      withdrawMsg.style.color = "green";
-
-      // Monetag logging
-      console.log(`MONITAG: BotToken=${MONITAG_BOT_TOKEN}, UserID=${MONITAG_USER_ID}, Withdraw=${amt}`);
-    });
-
-    function addFeedItem(user, amount) {
-      const div = document.createElement('div');
-      div.className = 'feed-item';
-      div.innerHTML = `<div><strong>${user}</strong><br><small>${new Date().toLocaleTimeString()}</small></div>
-                       <div><strong>+${amount} BTTC</strong></div>`;
-      liveFeed.prepend(div);
+function watchAd(){
+    if(typeof show_10030164 === 'function'){
+        show_10030164().then(()=>{
+            watchedAdsCount++;
+            earnedPoints += 1; // 1 coin per ad
+            updateUI();
+            saveData();
+        }).catch(err=>console.log(err));
     }
-  </script>
+}
+
+function startAutoAds(){
+    if(autoAdInterval) return;
+    autoAdInterval = setInterval(watchAd, 5000);
+    document.getElementById('auto-ad-btn').disabled = true;
+    document.getElementById('stop-auto-btn').disabled = false;
+}
+
+function stopAutoAds(){
+    clearInterval(autoAdInterval);
+    autoAdInterval = null;
+    document.getElementById('auto-ad-btn').disabled = false;
+    document.getElementById('stop-auto-btn').disabled = true;
+}
+
+function showWithdrawForm(){
+    document.getElementById('withdraw-section').style.display='block';
+}
+
+function withdrawPoints(){
+    const amount = parseFloat(document.getElementById('withdraw-amount').value);
+    const method = document.getElementById('payment-method').value;
+    const phone = document.getElementById('withdraw-phone').value;
+
+    if(amount > earnedPoints){
+        document.getElementById('withdraw-status').textContent = 'Insufficient balance!';
+        return;
+    }
+
+    earnedPoints -= amount;
+    updateUI();
+    saveData();
+
+    const message = `Withdrawal Request from User:\nAmount: ${amount}\nMethod: ${method}\nPhone: ${phone}`;
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_USER_ID}&text=${encodeURIComponent(message)}`)
+    .then(res=>res.json())
+    .then(data=>console.log(data));
+
+    document.getElementById('withdraw-status').textContent = 'Request sent!';
+    document.getElementById('withdraw-amount').value='';
+    document.getElementById('withdraw-phone').value='';
+}
+
+updateUI();
+</script>
 </body>
 </html>
