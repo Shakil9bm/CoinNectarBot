@@ -67,8 +67,7 @@ const ADMIN_USER_ID = 7694112804;
 
 const DAILY_ADS_LIMIT = 20;
 const BTTC_PER_AD = 100;
-const WAIT_BEFORE_AD = 3; // 3 seconds before ad starts
-const AD_DURATION = 15; // 15 seconds full ad
+const AD_DURATION = 17; // full ad duration in seconds
 
 let watchedAdsCount = parseInt(localStorage.getItem('watchedAdsCount')) || 0;
 let earnedPoints = parseInt(localStorage.getItem('earnedPoints')) || 0;
@@ -76,7 +75,7 @@ let earnedPoints = parseInt(localStorage.getItem('earnedPoints')) || 0;
 let adInProgress = false;
 let remainingAdTime = 0;
 let adTimer = null;
-let adFullyWatched = false;
+let adCompleted = false;
 
 const watchBtn = document.getElementById('watch-ad-btn');
 const adsSpan = document.getElementById('watched-ads');
@@ -99,25 +98,11 @@ function saveData(){
     localStorage.setItem('earnedPoints', earnedPoints);
 }
 
-function startWaitCountdown(){
-    watchBtn.disabled = true;
-    let waitTime = WAIT_BEFORE_AD;
-    watchBtn.textContent = `Starting Ad in ${waitTime}s`;
-
-    const waitInterval = setInterval(()=>{
-        waitTime--;
-        watchBtn.textContent = `Starting Ad in ${waitTime}s`;
-        if(waitTime <= 0){
-            clearInterval(waitInterval);
-            startAd();
-        }
-    },1000);
-}
-
 function startAd(){
     remainingAdTime = AD_DURATION;
     adInProgress = true;
-    adFullyWatched = false;
+    adCompleted = false;
+    watchBtn.disabled = true;
     watchBtn.textContent = `Watching Ad... ${remainingAdTime}s`;
 
     adTimer = setInterval(()=>{
@@ -126,11 +111,12 @@ function startAd(){
 
         if(remainingAdTime <= 0){
             clearInterval(adTimer);
+            adTimer = null;
             adInProgress = false;
-            adFullyWatched = true;
+            adCompleted = true;
 
-            // Add BTTC and increment watched count only if fully watched
-            if(adFullyWatched){
+            // Only add BTTC if fully watched
+            if(adCompleted){
                 watchedAdsCount++;
                 earnedPoints += BTTC_PER_AD;
                 updateUI();
@@ -156,19 +142,18 @@ document.addEventListener("visibilitychange", () => {
         if(document.visibilityState === "hidden" && adTimer){
             clearInterval(adTimer);
             adTimer = null;
-            adFullyWatched = false; // If user leaves, ad is not fully watched
+            adCompleted = false; // leaving cancels reward
         } else if(document.visibilityState === "visible" && !adTimer){
-            // Resume timer
-            startAd();
+            // resume only if ad still not completed
+            if(!adCompleted) startAd();
         }
     }
 });
 
+// Disable reward on click of close or navigation during ad
 watchBtn.addEventListener('click', ()=>{
-    if(watchedAdsCount >= DAILY_ADS_LIMIT) return;
-    if(!adInProgress){
-        startWaitCountdown();
-    }
+    if(watchedAdsCount >= DAILY_ADS_LIMIT || adInProgress) return;
+    startAd(); // starts 17s ad immediately
 });
 
 function showWithdrawForm(){
