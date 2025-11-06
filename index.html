@@ -1,138 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CoinNectarBot — Auto Ad System (10 Ads)</title>
-<style>
-body{
-  margin:0; padding:0;
-  background:#061021; color:#e9fbf2;
-  font-family:Arial,sans-serif; display:flex; justify-content:center; align-items:center; height:100vh;
-}
-.container{
-  background:rgba(255,255,255,0.02); padding:20px; border-radius:16px;
-  width:340px; box-shadow:0 12px 40px rgba(0,0,0,0.6);
-  position:relative;
-}
-h1{color:#00d48f; text-align:center;}
-.stats{margin:10px 0;}
-.stats p{margin:5px 0; font-size:14px;}
-.progress-circle{width:80px; height:80px; border:4px solid #00d48f; border-radius:50%; display:flex; justify-content:center; align-items:center; margin:10px auto;}
-.progress-circle span{font-size:18px; font-weight:bold;}
-#current-ad{
-  position:absolute; top:10px; right:15px;
-  background:#00d48f; color:#021; font-weight:bold;
-  padding:5px 10px; border-radius:10px; font-size:13px;
-}
-.btn-primary{
-  background:#00d48f; color:#022;
-  border:none; border-radius:6px;
-  width:90%; padding:12px; margin:6px 0;
-  font-size:15px; cursor:pointer;
-}
-.btn-primary:hover{background:#009966;}
-</style>
-
-<!-- 🔸 MoneyTag ad code (এইটা কাটা যাবে না) -->
-<script src='//libtl.com/sdk.js' data-zone='10030164' data-sdk='show_10030164'></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoinNectarBot - Earn Crypto</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better scrolling */
+            min-height: 100vh;
+            padding-top: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 450px;
+            padding: 25px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        h2 {
+            color: #555;
+            font-size: 1.2em;
+            margin-top: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .info-card {
+            background-color: #e6f7ff;
+            border: 1px solid #b3e0ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .info-card strong {
+            color: #0056b3;
+        }
+        .ad-section {
+            margin-top: 30px;
+        }
+        .ad-placeholder {
+            background-color: #e0e0e0;
+            border: 1px dashed #aaaaaa;
+            height: 200px; /* Standard ad banner height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        .btn-watch {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            max-width: 250px;
+            margin-top: 10px;
+        }
+        .btn-watch:hover {
+            background-color: #218838;
+        }
+        .balance-display {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            height: 10px;
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%; /* Will be controlled by JS */
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            font-size: 0.8em;
+            line-height: 10px;
+        }
+        .footer-note {
+            margin-top: 30px;
+            font-size: 0.85em;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <div id="current-ad">Ad 0/10</div>
-  <h1>CoinNectarBot</h1>
-  <div class="stats">
-    <p>Watched Ads Today: <span id="watched-ads">0</span>/10</p>
-    <p>Earned BTTC: <span id="earned-points">0</span></p>
-  </div>
-  <div class="progress-circle">
-    <span id="ads-progress">0%</span>
-  </div>
-  <button class="btn-primary" id="watch-ad-btn">Start Ads</button>
-</div>
+    <div class="container">
+        <h1>CoinNectarBot</h1>
+        <p class="tagline">Earn Crypto by Watching Ads!</p>
 
-<script>
-const DAILY_ADS_LIMIT = 10;     // 🔸 এখন ১০ টা বিজ্ঞাপন
-const BTTC_PER_AD = 100;        // প্রতিটা বিজ্ঞাপনে ১০০ BTTC
-const AD_DURATION = 15;         // প্রতিটি বিজ্ঞাপনের সময় ১৫ সেকেন্ড
+        <div class="balance-display">
+            <span>Your Balance:</span>
+            <span id="userBalance">$0.00</span>
+        </div>
 
-let watchedAdsCount = 0;
-let earnedPoints = 0;
-let adTimer = null;
-let remainingTime = 0;
-let adRunning = false;
+        <div class="info-card">
+            <strong>Ads Watched Today:</strong> <span id="adsWatched">0</span> / 20
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="dailyAdProgress" style="width: 0%;"></div>
+            </div>
+            <p style="margin-top: 10px;">Next reset in: <span id="timeToReset">23h 59m</span></p>
+        </div>
 
-const adsSpan = document.getElementById('watched-ads');
-const pointsSpan = document.getElementById('earned-points');
-const progressSpan = document.getElementById('ads-progress');
-const watchBtn = document.getElementById('watch-ad-btn');
-const currentAdDisplay = document.getElementById('current-ad');
+        <h2>Watch Ads & Earn</h2>
+        <div class="ad-section">
+            <div class="ad-placeholder" id="currentAdDisplay">
+                Advertisement will appear here.
+            </div>
+            <button class="btn-watch" id="watchAdBtn">Watch Ad (Earn $0.01)</button>
+        </div>
 
-function updateUI(){
-  adsSpan.textContent = watchedAdsCount;
-  pointsSpan.textContent = earnedPoints;
-  progressSpan.textContent = Math.min(100, (watchedAdsCount/DAILY_ADS_LIMIT)*100).toFixed(0)+"%";
-  currentAdDisplay.textContent = `Ad ${watchedAdsCount}/${DAILY_ADS_LIMIT}`;
-}
+        <h2>How it Works</h2>
+        <div class="info-card">
+            <p><strong>Daily Limit:</strong> Watch up to 20 ads per day.</p>
+            <p><strong>Earnings:</strong> Get $0.01 for each fully watched ad.</p>
+            <p><strong>Resume Feature:</strong> Ads resume from where you left off if interrupted.</p>
+            <p><strong>Cascading Ads:</strong> Three new ads appear instantly after one is finished.</p>
+            <p><strong>IP & Account Security:</strong> One IP per user, secure data storage.</p>
+            <p><strong>Data Persistence:</strong> Your progress is saved even if you refresh.</p>
+        </div>
 
-function startAdsSequence(){
-  watchBtn.disabled = true;
-  playNextAd();
-}
+        <p class="footer-note">Powered by CoinNectarBot Telegram Mini App</p>
+    </div>
 
-function playNextAd(){
-  if(watchedAdsCount >= DAILY_ADS_LIMIT){
-    watchBtn.textContent = "All 10 Ads Watched ✅";
-    watchBtn.disabled = false;
-    return;
-  }
+    <script>
+        // This is a placeholder for JavaScript logic.
+        // A real app would integrate with Telegram's WebApp API and a backend.
 
-  adRunning = true;
-  remainingTime = AD_DURATION;
-  watchBtn.textContent = `Ad Running... ${remainingTime}s`;
-  currentAdDisplay.textContent = `Ad ${watchedAdsCount+1}/${DAILY_ADS_LIMIT}`;
+        const userBalanceElement = document.getElementById('userBalance');
+        const adsWatchedElement = document.getElementById('adsWatched');
+        const dailyAdProgress = document.getElementById('dailyAdProgress');
+        const timeToResetElement = document.getElementById('timeToReset');
+        const currentAdDisplay = document.getElementById('currentAdDisplay');
+        const watchAdBtn = document.getElementById('watchAdBtn');
 
-  // 🔸 Moneytag বিজ্ঞাপন দেখানো
-  if(typeof show_10030164 === 'function'){
-    show_10030164().catch(e=>console.log("Ad Load Error", e));
-  }
+        let userBalance = 0.00;
+        let adsWatchedToday = 0;
+        const dailyAdLimit = 20;
 
-  adTimer = setInterval(()=>{
-    remainingTime--;
-    watchBtn.textContent = `Ad Running... ${remainingTime}s`;
+        function updateUI() {
+            userBalanceElement.textContent = `$${userBalance.toFixed(2)}`;
+            adsWatchedElement.textContent = adsWatchedToday;
+            const progress = (adsWatchedToday / dailyAdLimit) * 100;
+            dailyAdProgress.style.width = `${progress}%`;
+            
+            if (adsWatchedToday >= dailyAdLimit) {
+                watchAdBtn.disabled = true;
+                watchAdBtn.textContent = "Daily Limit Reached";
+                watchAdBtn.style.backgroundColor = '#6c757d';
+            } else {
+                watchAdBtn.disabled = false;
+                watchAdBtn.textContent = "Watch Ad (Earn $0.01)";
+                watchAdBtn.style.backgroundColor = '#28a745';
+            }
+            // In a real app, timeToReset would be calculated from backend or Telegram API
+            // For this example, we'll keep it static or simulated.
+        }
 
-    if(remainingTime <= 0){
-      clearInterval(adTimer);
-      watchedAdsCount++;
-      earnedPoints += BTTC_PER_AD;
-      updateUI();
+        watchAdBtn.addEventListener('click', () => {
+            if (adsWatchedToday < dailyAdLimit) {
+                // Simulate watching an ad
+                currentAdDisplay.textContent = "Loading Ad...";
+                watchAdBtn.disabled = true;
 
-      if(watchedAdsCount < DAILY_ADS_LIMIT){
-        setTimeout(playNextAd, 1000); // ১ সেকেন্ড পরে পরের বিজ্ঞাপন অটো শুরু
-      }else{
-        watchBtn.textContent = "All 10 Ads Watched ✅";
-        watchBtn.disabled = false;
-      }
-    }
-  },1000);
-}
+                setTimeout(() => {
+                    // Simulate ad playback (e.g., 5-10 seconds)
+                    currentAdDisplay.textContent = "Watching Ad (Please wait)...";
+                    let adTime = 5; // seconds
+                    let adInterval = setInterval(() => {
+                        adTime--;
+                        currentAdDisplay.textContent = `Watching Ad (${adTime}s remaining)...`;
+                        if (adTime <= 0) {
+                            clearInterval(adInterval);
+                            adsWatchedToday++;
+                            userBalance += 0.01;
+                            currentAdDisplay.textContent = "Ad Finished! Earning Credited.";
+                            updateUI();
+                            // In a real app, you'd then load 3 more ads or enable the button for next ad
+                            setTimeout(() => {
+                                currentAdDisplay.textContent = "Advertisement will appear here.";
+                                watchAdBtn.disabled = false;
+                            }, 1500); // Small delay before next ad button is active
+                        }
+                    }, 1000);
 
-// 🔹 যদি ট্যাব মিনিমাইজ করা হয় — তখন টাইমার বন্ধ, ফিরে এলে আবার চালু
-document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState === "hidden" && adRunning){
-    clearInterval(adTimer);
-    adRunning = false;
-  } else if(document.visibilityState === "visible" && !adRunning && watchedAdsCount < DAILY_ADS_LIMIT){
-    playNextAd();
-  }
-});
+                }, 1000); // Simulate network delay for ad load
+            }
+        });
 
-watchBtn.addEventListener("click", ()=>{
-  if(!adRunning) startAdsSequence();
-});
+        // Initial UI update
+        updateUI();
 
-updateUI();
-</script>
+        // Simulate daily reset for demonstration (in a real app, this would be server-side)
+        setInterval(() => {
+            // This is a very basic simulation. A real timer would be more complex.
+            let now = new Date();
+            let midnight = new Date(now);
+            midnight.setHours(24, 0, 0, 0);
+            let timeDiff = midnight.getTime() - now.getTime();
+            let hours = Math.floor(timeDiff / (1000 * 60 * 60));
+            let minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+            
+            timeToResetElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
+
+            if (timeDiff <= 0) {
+                adsWatchedToday = 0; // Reset ads
+                updateUI();
+            }
+        }, 1000); // Update every second
+    </script>
 </body>
-</html>
+              </html>
