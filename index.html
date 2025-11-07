@@ -1,163 +1,151 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<b:blog xmlns:b="http://www.google.com/2005/gml/b" xmlns:data="http://www.google.com/2005/gml/data">
-  <b:skin><![CDATA[
-    body { margin:0; padding:0; font-family:'Segoe UI', sans-serif; background:#f2f5f8; }
-    .cn-wrapper { max-width:720px; margin:50px auto; padding:28px; background:#fff; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.06); text-align:center; }
-    .cn-title { color:#007bff; font-size:22px; margin:0 0 12px; }
-    .cn-sub { color:#555; margin:0 0 18px; }
-    .cn-balance { background:#dff0df; color:#155724; padding:10px 14px; border-radius:10px; font-weight:600; display:inline-block; margin-bottom:12px; }
-    .cn-progress-wrap { width:100%; height:12px; background:#eef2f6; border-radius:8px; margin:12px 0; overflow:hidden; }
-    .cn-progress { width:0%; height:100%; background:#007bff; transition:width 300ms ease; }
-    .cn-btn { display:inline-block; background:#28a745; color:white; border:0; padding:12px 20px; border-radius:28px; font-size:16px; cursor:pointer; min-width:220px; }
-    .cn-btn[disabled] { background:#8b9498; cursor:not-allowed; }
-    .cn-status { margin-top:14px; color:#333; font-weight:500; min-height:20px; }
-    .cn-foot { margin-top:18px; color:#888; font-size:13px; }
-  ]]></b:skin>
+<div id="coinnectar-widget" style="max-width:420px;margin:auto;text-align:center;font-family:'Segoe UI',sans-serif;">
+  <h2 style="color:#007bff;">CoinNectarBot - Earn Crypto</h2>
+  <div id="balance" style="background:#d4edda;color:#155724;padding:10px;border-radius:8px;font-weight:bold;margin:10px 0;">
+    Balance: $<span id="userBalance">0.00</span>
+  </div>
+  <p><strong>Ads Watched:</strong> <span id="adsWatched">0</span> / 20</p>
+  <div style="height:10px;background:#e0e0e0;border-radius:5px;">
+    <div id="progressBar" style="width:0%;height:100%;background:#007bff;border-radius:5px;"></div>
+  </div>
+  <p id="timer" style="margin-top:10px;color:#777;">Next reset in: 23h 59m</p>
+  <p id="visitTime" style="margin-top:5px;color:#555;">Time on page: 0m 0s</p>
+  <button id="watchAdBtn" style="background:#28a745;color:#fff;border:none;padding:12px 20px;border-radius:30px;cursor:pointer;margin-top:15px;">🎬 Watch Ad ($0.01)</button>
+  <p style="font-size:0.8em;color:#888;margin-top:15px;">Powered by CoinNectarBot</p>
+</div>
 
-  <b:template>
-    <b:section id="main" class="main">
-      <b:widget id="HTML_COINNECTAR" type="HTML" title="CoinNectar Ad Viewer" locked="false">
-        <b:widget-settings>
-          <b:widget-setting name="content"><![CDATA[
-            <div class="cn-wrapper">
-              <h1 class="cn-title">CoinNectarBot — Watch Ads & Earn</h1>
-              <p class="cn-sub">Click the button below to watch a rewarded ad. You must watch the full ad to receive the reward.</p>
+<!-- MoneTag SDK -->
+<script src="https://libtl.com/sdk.js" data-zone="10030164" data-sdk="show_10030164"></script>
 
-              <div class="cn-balance">Balance: $<span id="cn-balance">0.00</span></div>
+<!-- Adsterra backup banner -->
+<script type="text/javascript" src="//pl27620444.effectivegatecpm.com/fb/7c/fe/fb7cfe1564e94bf1ad4d65f6f3f36804.js"></script>
 
-              <div style="margin-top:12px;">
-                <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-                  <div>Ads watched today:</div>
-                  <div style="font-weight:700;color:#333;"><span id="cn-count">0</span>/20</div>
-                </div>
-                <div class="cn-progress-wrap" aria-hidden="true">
-                  <div id="cn-progress" class="cn-progress"></div>
-                </div>
-                <div id="cn-timer" style="color:#777;font-size:13px;margin-top:6px;">Next reset in: --:--:--</div>
-              </div>
+<script>
+const userBalanceEl = document.getElementById('userBalance');
+const adsWatchedEl = document.getElementById('adsWatched');
+const progressBar = document.getElementById('progressBar');
+const timerEl = document.getElementById('timer');
+const watchAdBtn = document.getElementById('watchAdBtn');
+const visitTimeEl = document.getElementById('visitTime');
 
-              <div style="margin-top:16px;">
-                <button id="cn-watch-btn" class="cn-btn">🎬 Show Ad (Earn $0.01)</button>
-              </div>
+// Load saved balance and ads count
+let userBalance = parseFloat(localStorage.getItem('cn_balance')) || 0.00;
+let adsWatched = parseInt(localStorage.getItem('cn_adsWatched')) || 0;
+let lastReset = parseInt(localStorage.getItem('cn_lastReset')) || Date.now();
 
-              <div id="cn-status" class="cn-status" aria-live="polite"></div>
-              <div class="cn-foot">Powered by CoinNectarBot</div>
-            </div>
+const dailyLimit = 20;
+const adReward = 0.01;
 
-            <script type="text/javascript"><![CDATA[
-              (function(){
-                const ZONE_MT = '10030164';
-                const ADSTERra_SRC = '//pl27620444.effectivegatecpm.com/fb/7c/fe/fb7cfe1564e94bf1ad4d65f6f3f36804.js';
-                const DAILY_LIMIT = 20;
-                const REWARD = 0.01;
+// Track visit time (not saved)
+let visitStart = Date.now();
 
-                const KEYS = { balance: 'cn_balance_v1', count: 'cn_count_v1', lastReset: 'cn_lastReset_v1' };
-                const elBalance = document.getElementById('cn-balance');
-                const elCount = document.getElementById('cn-count');
-                const elProgress = document.getElementById('cn-progress');
-                const elTimer = document.getElementById('cn-timer');
-                const elBtn = document.getElementById('cn-watch-btn');
-                const elStatus = document.getElementById('cn-status');
+// Save balance and ads count
+function saveData(){
+  localStorage.setItem('cn_balance', userBalance.toFixed(2));
+  localStorage.setItem('cn_adsWatched', adsWatched);
+  localStorage.setItem('cn_lastReset', lastReset);
+}
 
-                let balance = parseFloat(localStorage.getItem(KEYS.balance)) || 0.00;
-                let count = parseInt(localStorage.getItem(KEYS.count)) || 0;
-                let lastReset = parseInt(localStorage.getItem(KEYS.lastReset)) || Date.now();
+// Update UI
+function updateUI(){
+  userBalanceEl.textContent = userBalance.toFixed(2);
+  adsWatchedEl.textContent = adsWatched;
+  progressBar.style.width = `${(adsWatched/dailyLimit)*100}%`;
 
-                function saveAll(){
-                  localStorage.setItem(KEYS.balance, balance.toFixed(2));
-                  localStorage.setItem(KEYS.count, String(count));
-                  localStorage.setItem(KEYS.lastReset, String(lastReset));
-                }
+  if(adsWatched >= dailyLimit){
+    watchAdBtn.disabled = true;
+    watchAdBtn.textContent = "✅ Daily Limit Reached";
+    watchAdBtn.style.background = "#6c757d";
+  } else {
+    watchAdBtn.disabled = false;
+    watchAdBtn.textContent = `🎬 Watch Ad ($${adReward.toFixed(2)})`;
+    watchAdBtn.style.background = "#28a745";
+  }
 
-                function updateUI(){
-                  elBalance.textContent = balance.toFixed(2);
-                  elCount.textContent = count;
-                  const pct = Math.min(100, (count/DAILY_LIMIT)*100);
-                  elProgress.style.width = pct + '%';
-                  if(count >= DAILY_LIMIT){
-                    elBtn.disabled = true;
-                    elBtn.textContent = '✅ Daily Limit Reached';
-                  } else {
-                    elBtn.disabled = false;
-                    elBtn.textContent = '🎬 Show Ad (Earn $0.01)';
-                  }
-                  saveAll();
-                }
+  saveData();
+}
 
-                function checkReset(){
-                  const now = Date.now();
-                  if(now - lastReset >= 24*60*60*1000){
-                    count = 0;
-                    lastReset = now;
-                    saveAll();
-                  }
-                }
+// Reset daily limit if 24h passed
+function resetDaily(){
+  const now = Date.now();
+  if(now - lastReset >= 24*60*60*1000){
+    adsWatched = 0;
+    lastReset = now;
+    saveData();
+  }
+}
 
-                function tickTimer(){
-                  const now = Date.now();
-                  const next = lastReset + 24*60*60*1000;
-                  let left = next - now;
-                  if(left <= 0){
-                    checkReset();
-                    updateUI();
-                    left = next - Date.now();
-                  }
-                  const h = Math.floor(left / (1000*60*60));
-                  const m = Math.floor((left % (1000*60*60)) / (1000*60));
-                  const s = Math.floor((left % (1000*60)) / 1000);
-                  elTimer.textContent = 'Next reset in: ' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-                }
+// Countdown for next reset
+function countdown(){
+  const now = Date.now();
+  const nextReset = lastReset + 24*60*60*1000;
+  const left = nextReset - now;
 
-                function loadScript(src, attrs){
-                  return new Promise((resolve, reject) => {
-                    const s = document.createElement('script');
-                    s.async = true;
-                    s.src = src;
-                    if(attrs) for(const k in attrs) s.setAttribute(k, attrs[k]);
-                    s.onload = () => resolve(s);
-                    s.onerror = () => reject(new Error('Failed to load ' + src));
-                    document.head.appendChild(s);
-                  });
-                }
+  if(left <= 0){
+    resetDaily();
+    updateUI();
+    return;
+  }
 
-                let mtLoaded = false;
-                let adsterraLoaded = false;
+  const h = Math.floor(left / (1000*60*60));
+  const m = Math.floor((left % (1000*60*60)) / (1000*60));
+  const s = Math.floor((left % (1000*60)) / 1000);
+  timerEl.textContent = `Next reset in: ${h}h ${m}m ${s}s`;
+}
 
-                function preloadSDKs(){
-                  loadScript('https://libtl.com/sdk.js', { 'data-zone': ZONE_MT, 'data-sdk': 'show_' + ZONE_MT })
-                    .then(()=> mtLoaded = true).catch(()=> elStatus.textContent='MoneTag failed');
-                  loadScript(ADSTERra_SRC).then(()=> adsterraLoaded = true).catch(()=> elStatus.textContent+=' Adsterra failed');
-                }
+// Track visit time (resets on refresh)
+function trackVisitTime(){
+  const now = Date.now();
+  const diff = now - visitStart;
+  const m = Math.floor(diff / (1000*60));
+  const s = Math.floor((diff % (1000*60)) / 1000);
+  visitTimeEl.textContent = `Time on page: ${m}m ${s}s`;
+}
 
-                let adInProgress = false;
-                async function showAd(){
-                  checkReset();
-                  if(count>=DAILY_LIMIT){ elStatus.textContent="Reached daily limit"; return; }
-                  if(adInProgress){ elStatus.textContent="Ad already in progress"; return; }
-                  adInProgress=true; elStatus.textContent='Preparing ad...'; elBtn.disabled=true;
-                  try{
-                    if(typeof window['show_' + ZONE_MT]==='function'){
-                      await window['show_' + ZONE_MT]();
-                      count++; balance=(balance+REWARD).toFixed(2); elStatus.textContent='✅ Full ad watched — reward credited.';
-                    } else if(adsterraLoaded){
-                      await new Promise(r=>setTimeout(r,10000));
-                      count++; balance=(balance+REWARD).toFixed(2); elStatus.textContent='✅ Fallback ad watched (simulated) — reward credited.';
-                    } else { elStatus.textContent='No ad SDK available'; }
-                  } catch(err){ elStatus.textContent='⚠️ Ad not completed. No reward.'; }
-                  adInProgress=false; elBtn.disabled=false; updateUI();
-                }
+// Show ad: MoneTag or Adsterra
+async function startAd(){
+  if(adsWatched >= dailyLimit) return;
 
-                checkReset();
-                updateUI();
-                preloadSDKs();
-                setInterval(tickTimer,1000);
-                elBtn.addEventListener('click',()=>showAd());
-              })();
-            ]]></script>
+  watchAdBtn.disabled = true;
+  watchAdBtn.textContent = "Loading Ad...";
 
-          </b:widget-setting>
-        </b:widget-settings>
-      </b:widget>
-    </b:section>
-  </b:template>
-</b:blog>
+  // **Add reward immediately** when ad starts
+  adsWatched++;
+  userBalance += adReward;
+  updateUI();
+
+  try {
+    let adCompleted = false;
+
+    // MoneTag first
+    if(typeof show_10030164 === 'function'){
+      adCompleted = await new Promise(resolve => {
+        show_10030164({
+          onComplete: () => resolve(true),
+          onCloseEarly: () => resolve(false)
+        });
+      });
+    }
+
+    // If MoneTag fails or closed early, fallback Adsterra
+    if(!adCompleted){
+      adCompleted = await new Promise(resolve => {
+        const adWin = confirm("💡 Watch Adsterra ad completely to continue.");
+        resolve(adWin);
+      });
+    }
+
+  } catch(e){
+    console.error(e);
+  }
+
+  watchAdBtn.disabled = false;
+  watchAdBtn.textContent = `🎬 Watch Ad ($${adReward.toFixed(2)})`;
+}
+
+// Initialize
+watchAdBtn.addEventListener('click', startAd);
+resetDaily();
+updateUI();
+setInterval(countdown, 1000);
+setInterval(trackVisitTime, 1000);
+</script>
