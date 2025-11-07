@@ -1,21 +1,60 @@
-<div id="coinnectar-widget" style="max-width:420px;margin:auto;text-align:center;font-family:'Segoe UI',sans-serif; background: linear-gradient(to bottom, #fff0f5, #ffe6f0); padding:25px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
-  <h2 style="color:#d63384; font-weight:bold; font-size:1.8em; margin-bottom:15px;">🌸 CoinNectarBot - Earn Crypto 🌸</h2>
+<div id="coinnectar-widget" style="
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  font-family:'Segoe UI',sans-serif;
+  background: linear-gradient(to bottom, #fff0f5, #ffe6f0);
+  padding:5%;
+  box-sizing:border-box;
+">
+
+  <h2 style="color:#d63384; font-weight:bold; font-size:6vw; margin-bottom:4vw;">
+    🌸 CoinNectarBot - Earn Crypto 🌸
+  </h2>
   
-  <div id="balance" style="background:#fff0f5; color:#d63384; padding:15px; border-radius:12px; font-weight:bold; margin:15px 0; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+  <div id="balance" style="
+    background:#fff0f5;
+    color:#d63384;
+    padding:4vw;
+    border-radius:3vw;
+    font-weight:bold;
+    margin:4vw 0;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    font-size:5vw;
+    width:80%;
+  ">
     Balance: $<span id="userBalance">0.00</span>
   </div>
 
-  <p style="font-weight:bold; color:#6f42c1;"><strong>Ads Watched:</strong> <span id="adsWatched">0</span> / 20</p>
-  <div style="height:15px;background:#f0e6ff;border-radius:10px; overflow:hidden; margin-bottom:15px;">
-    <div id="progressBar" style="width:0%;height:100%;background:#d63384;border-radius:10px;"></div>
+  <p style="font-weight:bold; color:#6f42c1; font-size:4.5vw;">
+    <strong>Ads Watched:</strong> <span id="adsWatched">0</span> / 20
+  </p>
+  
+  <div style="height:3vw;width:80%;background:#f0e6ff;border-radius:10vw;overflow:hidden;margin-bottom:4vw;">
+    <div id="progressBar" style="width:0%;height:100%;background:#d63384;border-radius:10vw;"></div>
   </div>
 
-  <p id="timer" style="margin-top:10px;color:#555; font-style:italic;">Next reset in: 23h 59m</p>
-  <p id="visitTime" style="margin-top:5px;color:#555; font-style:italic;">Time on page: 0m 0s</p>
+  <p id="timer" style="margin-top:2vw;color:#555; font-style:italic; font-size:4vw;">Next reset in: 23h 59m</p>
+  <p id="visitTime" style="margin-top:1vw;color:#555; font-style:italic; font-size:4vw;">Time on page: 0m 0s</p>
 
-  <button id="watchAdBtn" style="background:#d63384; color:#fff; border:none; padding:14px 25px; border-radius:30px; cursor:pointer; font-weight:bold; font-size:1em; margin-top:15px; box-shadow:0 4px 10px rgba(0,0,0,0.2);">🎬 Watch Ad ($0.01)</button>
+  <button id="watchAdBtn" style="
+    background:#d63384;
+    color:#fff;
+    border:none;
+    padding:4vw 10vw;
+    border-radius:10vw;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:4.5vw;
+    margin-top:4vw;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  ">🎬 Watch Ad ($0.01)</button>
   
-  <p style="font-size:0.8em;color:#888;margin-top:20px;">Powered by 🌸 CoinNectarBot 🌸</p>
+  <p style="font-size:3.5vw;color:#888;margin-top:6vw;">Powered by 🌸 CoinNectarBot 🌸</p>
 </div>
 
 <!-- MoneTag SDK -->
