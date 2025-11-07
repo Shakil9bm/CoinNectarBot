@@ -1,180 +1,113 @@
-<div id="coinnectar-widget" style="  
-  width:100vw;  
-  height:100vh;  
-  display:flex;  
-  flex-direction:column;  
-  justify-content:center;  
-  align-items:center;  
-  text-align:center;  
-  font-family:'Segoe UI',sans-serif;  
-  background: linear-gradient(to bottom, #fff0f5, #ffe6f0);  
-  padding:5%;  
-  box-sizing:border-box;  
-">  
-  <h2 style="color:#d63384; font-weight:bold; font-size:6vw; margin-bottom:4vw;">🌸 CoinNectarBot - Earn Crypto 🌸</h2>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Romantic News with Registration & Timer</title>
+  <style>
+    /* Fullscreen 9:16 container */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #ffe6f7, #fff0f5); /* Romantic pink gradient */
+    }
 
-  <div id="balance" style="  
-    background:#fff0f5;  
-    color:#d63384;  
-    padding:4vw;  
-    border-radius:3vw;  
-    font-weight:bold;  
-    margin:4vw 0;  
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);  
-    font-size:5vw;  
-    width:80%;  
-  ">Balance: $<span id="userBalance">0.00</span></div>  
+    .container {
+      width: 100vw;
+      height: 177.78vw; /* 9:16 ratio: height = width * 16 / 9 */
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 5%;
+      box-sizing: border-box;
+    }
 
-  <p style="font-weight:bold; color:#6f42c1; font-size:4.5vw;">  
-    <strong>Ads Watched:</strong> <span id="adsWatched">0</span> / 20  
-  </p>  
+    .news {
+      background-color: #fff0f5;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      font-size: 22px; /* বড় নিউজ */
+      line-height: 1.8;
+      color: #d63384; /* Romantic pink color */
+      margin-bottom: 30px;
+      max-width: 90%;
+      animation: fadeIn 1s ease-in-out;
+    }
 
-  <div style="height:3vw;width:80%;background:#f0e6ff;border-radius:10vw;overflow:hidden;margin-bottom:4vw;">  
-    <div id="progressBar" style="width:0%;height:100%;background:#d63384;border-radius:10vw;"></div>  
-  </div>  
+    .register-btn {
+      padding: 18px 35px;
+      font-size: 22px;
+      color: #fff;
+      background-color: #ff6699; /* Romantic pink button */
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold; /* মোটা লেখা */
+    }
 
-  <p id="timer" style="margin-top:2vw;color:#555; font-style:italic; font-size:4vw;">Next reset in: 23h 59m</p>  
-  <p id="visitTime" style="margin-top:1vw;color:#555; font-style:italic; font-size:4vw;">Time on page: 0m 0s</p>  
+    .register-btn:hover {
+      background-color: #ff3366;
+      transform: scale(1.05);
+    }
 
-  <button id="watchAdBtn" style="  
-    background:#d63384;  
-    color:#fff;  
-    border:none;  
-    padding:4vw 10vw;  
-    border-radius:10vw;  
-    cursor:pointer;  
-    font-weight:bold;  
-    font-size:4.5vw;  
-    margin-top:4vw;  
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);  
-  ">🎬 Watch Ad ($0.01)</button>
+    .timer {
+      background: #ffe6f7;
+      padding: 12px 25px;
+      border-radius: 12px;
+      margin-top: 15px;
+      font-size: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      color: #d63384;
+    }
 
-  <p style="font-size:3.5vw;color:#888;margin-top:6vw;">Powered by 🌸 CoinNectarBot 🌸</p>  
-</div>
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
 
-<!-- Monetag Ad -->  
-<script src="https://libtl.com/sdk.js" data-zone="10030164" data-sdk="show_10030164"></script>  
+  <div class="container">
+    <div class="news">
+      Breaking News: In a heartwarming gesture, the local community has launched an initiative to bring love and care into the city. Residents are coming together this weekend to plant trees, brighten public spaces, and spread positivity throughout neighborhoods. Everyone is encouraged to join and be part of this romantic act of kindness that celebrates togetherness and harmony.
+    </div>
 
-<!-- Adsterra backup -->  
-<script type="text/javascript" src="//pl27620444.effectivegatecpm.com/fb/7c/fe/fb7cfe1564e94bf1ad4d65f6f3f36804.js"></script>  
+    <a href="https://www.effectivegatecpm.com/jcqe04f9w?key=0a354ba32779cb56eafc31123448936f" class="register-btn">
+      Register Now
+    </a>
 
-<script>
-const userBalanceEl = document.getElementById('userBalance');  
-const adsWatchedEl = document.getElementById('adsWatched');  
-const progressBar = document.getElementById('progressBar');  
-const timerEl = document.getElementById('timer');  
-const watchAdBtn = document.getElementById('watchAdBtn');  
-const visitTimeEl = document.getElementById('visitTime');  
+    <div class="timer" id="timer">Time on page: 0s</div>
 
-let userBalance = parseFloat(localStorage.getItem('cn_balance')) || 0.00;  
-let adsWatched = parseInt(localStorage.getItem('cn_adsWatched')) || 0;  
-let lastReset = parseInt(localStorage.getItem('cn_lastReset')) || Date.now();  
+    <!-- Adsterra Script -->
+    <script type='text/javascript' src='//pl27620444.effectivegatecpm.com/fb/7c/fe/fb7cfe1564e94bf1ad4d65f6f3f36804.js'></script>
 
-const dailyLimit = 20;  
-const adReward = 0.01;  
-let visitStart = Date.now();  
+    <script>
+      let seconds = 0;
+      const timerElement = document.getElementById('timer');
+      function updateTimer() {
+        seconds++;
+        timerElement.textContent = `Time on page: ${seconds}s`;
+      }
+      setInterval(updateTimer, 1000);
+    </script>
+  </div>
 
-function saveData(){  
-  localStorage.setItem('cn_balance', userBalance.toFixed(2));  
-  localStorage.setItem('cn_adsWatched', adsWatched);  
-  localStorage.setItem('cn_lastReset', lastReset);  
-}  
-
-function updateUI(){  
-  userBalanceEl.textContent = userBalance.toFixed(2);  
-  adsWatchedEl.textContent = adsWatched;  
-  progressBar.style.width = `${(adsWatched/dailyLimit)*100}%`;  
-
-  if(adsWatched >= dailyLimit){  
-    watchAdBtn.disabled = true;  
-    watchAdBtn.textContent = "✅ Daily Limit Reached";  
-    watchAdBtn.style.background = "#6c757d";  
-  } else {  
-    watchAdBtn.disabled = false;  
-    watchAdBtn.textContent = `🎬 Watch Ad ($${adReward.toFixed(2)})`;  
-    watchAdBtn.style.background = "#d63384";  
-  }  
-
-  saveData();  
-}  
-
-function resetDaily(){  
-  const now = Date.now();  
-  if(now - lastReset >= 24*60*60*1000){  
-    adsWatched = 0;  
-    lastReset = now;  
-    saveData();  
-  }  
-}  
-
-function countdown(){  
-  const now = Date.now();  
-  const nextReset = lastReset + 24*60*60*1000;  
-  const left = nextReset - now;  
-
-  if(left <= 0){  
-    resetDaily();  
-    updateUI();  
-    return;  
-  }  
-
-  const h = Math.floor(left / (1000*60*60));  
-  const m = Math.floor((left % (1000*60*60)) / (1000*60));  
-  const s = Math.floor((left % (1000*60)) / 1000);  
-  timerEl.textContent = `Next reset in: ${h}h ${m}m ${s}s`;  
-}  
-
-function trackVisitTime(){  
-  const now = Date.now();  
-  const diff = now - visitStart;  
-  const m = Math.floor(diff / (1000*60));  
-  const s = Math.floor((diff % (1000*60)) / 1000);  
-  visitTimeEl.textContent = `Time on page: ${m}m ${s}s`;  
-}  
-
-async function startAd(){  
-  if(adsWatched >= dailyLimit) return;  
-
-  watchAdBtn.disabled = true;  
-  watchAdBtn.textContent = "Loading Ad...";  
-
-  // Monetag ad first
-  let monetagSuccess = false;
-  try {  
-    if(typeof show_10030164 === 'function'){  
-      show_10030164();  
-      monetagSuccess = true;
-    }  
-  } catch(e){  
-    console.log("Monetag not available", e);  
-  }  
-
-  // Adsterra as backup if Monetag fails
-  if(!monetagSuccess){
-    try {  
-      window.open("//pl27620444.effectivegatecpm.com/fb/7c/fe/fb7cfe1564e94bf1ad4d65f6f3f36804.js", "_blank");  
-    } catch(e){  
-      console.log("Adsterra failed", e);  
-    }  
-  }
-
-  // Wait for 15 seconds before allowing next ad  
-  let waitTime = 15;  
-  const countdownInterval = setInterval(() => {  
-    watchAdBtn.textContent = `⏳ Wait ${waitTime}s...`;  
-    waitTime--;  
-    if(waitTime < 0){  
-      clearInterval(countdownInterval);  
-      adsWatched++;  
-      userBalance += adReward;  
-      updateUI();  
-    }  
-  }, 1000);  
-}  
-
-watchAdBtn.addEventListener('click', startAd);  
-resetDaily();  
-updateUI();  
-setInterval(countdown, 1000);  
-setInterval(trackVisitTime, 1000);  
-</script>
+</body>
+</html>
