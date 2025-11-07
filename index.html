@@ -1,16 +1,21 @@
-<div id="coinnectar-widget" style="max-width:420px;margin:auto;text-align:center;font-family:'Segoe UI',sans-serif;">
-  <h2 style="color:#007bff;">CoinNectarBot - Earn Crypto</h2>
-  <div id="balance" style="background:#d4edda;color:#155724;padding:10px;border-radius:8px;font-weight:bold;margin:10px 0;">
+<div id="coinnectar-widget" style="max-width:420px;margin:auto;text-align:center;font-family:'Segoe UI',sans-serif; background: linear-gradient(to bottom, #fff0f5, #ffe6f0); padding:25px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+  <h2 style="color:#d63384; font-weight:bold; font-size:1.8em; margin-bottom:15px;">🌸 CoinNectarBot - Earn Crypto 🌸</h2>
+  
+  <div id="balance" style="background:#fff0f5; color:#d63384; padding:15px; border-radius:12px; font-weight:bold; margin:15px 0; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
     Balance: $<span id="userBalance">0.00</span>
   </div>
-  <p><strong>Ads Watched:</strong> <span id="adsWatched">0</span> / 20</p>
-  <div style="height:10px;background:#e0e0e0;border-radius:5px;">
-    <div id="progressBar" style="width:0%;height:100%;background:#007bff;border-radius:5px;"></div>
+
+  <p style="font-weight:bold; color:#6f42c1;"><strong>Ads Watched:</strong> <span id="adsWatched">0</span> / 20</p>
+  <div style="height:15px;background:#f0e6ff;border-radius:10px; overflow:hidden; margin-bottom:15px;">
+    <div id="progressBar" style="width:0%;height:100%;background:#d63384;border-radius:10px;"></div>
   </div>
-  <p id="timer" style="margin-top:10px;color:#777;">Next reset in: 23h 59m</p>
-  <p id="visitTime" style="margin-top:5px;color:#555;">Time on page: 0m 0s</p>
-  <button id="watchAdBtn" style="background:#28a745;color:#fff;border:none;padding:12px 20px;border-radius:30px;cursor:pointer;margin-top:15px;">🎬 Watch Ad ($0.01)</button>
-  <p style="font-size:0.8em;color:#888;margin-top:15px;">Powered by CoinNectarBot</p>
+
+  <p id="timer" style="margin-top:10px;color:#555; font-style:italic;">Next reset in: 23h 59m</p>
+  <p id="visitTime" style="margin-top:5px;color:#555; font-style:italic;">Time on page: 0m 0s</p>
+
+  <button id="watchAdBtn" style="background:#d63384; color:#fff; border:none; padding:14px 25px; border-radius:30px; cursor:pointer; font-weight:bold; font-size:1em; margin-top:15px; box-shadow:0 4px 10px rgba(0,0,0,0.2);">🎬 Watch Ad ($0.01)</button>
+  
+  <p style="font-size:0.8em;color:#888;margin-top:20px;">Powered by 🌸 CoinNectarBot 🌸</p>
 </div>
 
 <!-- MoneTag SDK -->
@@ -27,25 +32,20 @@ const timerEl = document.getElementById('timer');
 const watchAdBtn = document.getElementById('watchAdBtn');
 const visitTimeEl = document.getElementById('visitTime');
 
-// Load saved balance and ads count
 let userBalance = parseFloat(localStorage.getItem('cn_balance')) || 0.00;
 let adsWatched = parseInt(localStorage.getItem('cn_adsWatched')) || 0;
 let lastReset = parseInt(localStorage.getItem('cn_lastReset')) || Date.now();
 
 const dailyLimit = 20;
 const adReward = 0.01;
-
-// Track visit time (not saved)
 let visitStart = Date.now();
 
-// Save balance and ads count
 function saveData(){
   localStorage.setItem('cn_balance', userBalance.toFixed(2));
   localStorage.setItem('cn_adsWatched', adsWatched);
   localStorage.setItem('cn_lastReset', lastReset);
 }
 
-// Update UI
 function updateUI(){
   userBalanceEl.textContent = userBalance.toFixed(2);
   adsWatchedEl.textContent = adsWatched;
@@ -58,13 +58,12 @@ function updateUI(){
   } else {
     watchAdBtn.disabled = false;
     watchAdBtn.textContent = `🎬 Watch Ad ($${adReward.toFixed(2)})`;
-    watchAdBtn.style.background = "#28a745";
+    watchAdBtn.style.background = "#d63384";
   }
 
   saveData();
 }
 
-// Reset daily limit if 24h passed
 function resetDaily(){
   const now = Date.now();
   if(now - lastReset >= 24*60*60*1000){
@@ -74,7 +73,6 @@ function resetDaily(){
   }
 }
 
-// Countdown for next reset
 function countdown(){
   const now = Date.now();
   const nextReset = lastReset + 24*60*60*1000;
@@ -92,7 +90,6 @@ function countdown(){
   timerEl.textContent = `Next reset in: ${h}h ${m}m ${s}s`;
 }
 
-// Track visit time (resets on refresh)
 function trackVisitTime(){
   const now = Date.now();
   const diff = now - visitStart;
@@ -101,14 +98,12 @@ function trackVisitTime(){
   visitTimeEl.textContent = `Time on page: ${m}m ${s}s`;
 }
 
-// Show ad: MoneTag or Adsterra
 async function startAd(){
   if(adsWatched >= dailyLimit) return;
 
   watchAdBtn.disabled = true;
   watchAdBtn.textContent = "Loading Ad...";
 
-  // **Add reward immediately** when ad starts
   adsWatched++;
   userBalance += adReward;
   updateUI();
@@ -116,7 +111,6 @@ async function startAd(){
   try {
     let adCompleted = false;
 
-    // MoneTag first
     if(typeof show_10030164 === 'function'){
       adCompleted = await new Promise(resolve => {
         show_10030164({
@@ -126,7 +120,6 @@ async function startAd(){
       });
     }
 
-    // If MoneTag fails or closed early, fallback Adsterra
     if(!adCompleted){
       adCompleted = await new Promise(resolve => {
         const adWin = confirm("💡 Watch Adsterra ad completely to continue.");
@@ -142,7 +135,6 @@ async function startAd(){
   watchAdBtn.textContent = `🎬 Watch Ad ($${adReward.toFixed(2)})`;
 }
 
-// Initialize
 watchAdBtn.addEventListener('click', startAd);
 resetDaily();
 updateUI();
